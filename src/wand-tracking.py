@@ -4,6 +4,9 @@
 # Date: March 31th 2022
 # CHANGELOG
 # - Initial creation 
+from cmath import inf
+import os
+#from os import XATTR_SIZE_MAX
 import cv2
 from cv2 import EVENT_FLAG_SHIFTKEY
 import numpy as np
@@ -26,7 +29,23 @@ class wandTipTracker():
         self.capturedWandPositions = []
         self.width = width
         self.height = height
+        self.recordCaptures = True
+        self.saveLocation = '../wandCaps/'
 
+    #Normalizes a list of points (x,y) to a 16 x 16 grid
+    def normalizePts(self,pts):
+        x_max = max([pt[0] for pt in pts])
+        x_min = min([pt[0] for pt in pts])
+        y_max = max([pt[1] for pt in pts])
+        y_min = min([pt[1] for pt in pts])
+
+        out = []
+        for pt in pts:
+            new_x = int((pt[0] - x_min)/(x_max - x_min) * 16)
+            new_y = int((pt[1] - y_min)/(y_max - y_min) * 16)
+            out.append((new_x,new_y))
+        return out
+    
     def searching_state(self,distanceTraveled):
         print(distanceTraveled)
         self.capturedWandPositions = []
@@ -58,14 +77,21 @@ class wandTipTracker():
 
     def validating_state(self):
         numPoints = len(self.capturedWandPositions)
-        blankImg = np.zeros((int(self.height),int(self.width),3), np.uint8)
+        newPts = self.normalizePts(self.capturedWandPositions)
+        print(newPts)
+        blankImg = np.zeros((20,20,3), np.uint8)
         for idx in range(numPoints):
             if idx < numPoints-1:
-                blankImg = cv2.line(blankImg, self.capturedWandPositions[idx], self.capturedWandPositions[idx+1], (255, 0, 0), 5)
+                capturedImage = cv2.line(blankImg, newPts[idx], newPts[idx+1], (255, 0, 0), 1)
         self.state = "SEARCHING"
-        
+
         #For testing only
-        cv2.imshow("Processed", blankImg)
+        cv2.imshow("Captured", capturedImage)
+
+        if self.recordCaptures:
+            now = str(time.time())
+            cv2.imwrite(self.saveLocation + '_' + now + '.png',capturedImage)
+
         time.sleep(2)
 
     def run(self,frame):
@@ -78,6 +104,10 @@ class wandTipTracker():
         cv2.circle(grayImage, maxLoc, 10, (255, 0, 0), 2)
         cv2.imshow("Original", grayImage)
         cv2.imshow("processed", thresh)
+
+        # Create folder if it does not already exist
+        if self.recordCaptures  and not os.path.exists(self.saveLocation):
+            os.makedirs(self.saveLocation)
         
         if maxLoc[0] != 0 and maxLoc[1] != 0:
 
