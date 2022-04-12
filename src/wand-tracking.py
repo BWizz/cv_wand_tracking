@@ -97,20 +97,20 @@ class wandTipTracker():
         spell_names = ['Luminos', 'Wingardium Leviosa']
         spell_name = spell_names[np.argmax(score)]
         if best_score > 80:
-            outPut = "DETECTED " + spell_name + \
+            output = "DETECTED " + spell_name + \
                 " : " + str(best_score)
         else:
-            outPut = "FAILED TO DETECT SPELL"
+            output = "FAILED TO DETECT SPELL"
 
         print('=========================================')
-        print(outPut)
+        print(output)
         print('=========================================')
 
         if self.recordCaptures:
             now = str(time.time())
-            outPut = outPut.replace(':','_')
-            outPut = outPut.replace('.','_')
-            cv2.imwrite(self.saveLocation + outPut + '_' + now + '.png',capturedImage)
+            output = output.replace(':','_')
+            output = output.replace('.','_')
+            cv2.imwrite(self.saveLocation + output + '_' + now + '.png',capturedImage)
         
         time.sleep(1.5)
 
