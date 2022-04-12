@@ -99,7 +99,6 @@ class wandTipTracker():
         if best_score > 80:
             outPut = "DETECTED " + spell_name + \
                 " : " + str(best_score)
-            print(outPut)
         else:
             outPut = "FAILED TO DETECT SPELL"
 
