@@ -1,6 +1,10 @@
 # Project Overview
 This repo contains a python application and utility scripts in an attempt to re-create the "Wizarding World of Harry Potter" wand tip "spell" detection attraction(s).
 
+Here's examples from the theme park that inspired this project.
+
+https://youtu.be/CeGL_Er046U
+
 ## How does it work?
 Using a retrofitted night vision security camera, the IR reflection from the wand tip is tracked in real time. The captured motion is normalized and a new image is created that contains the spells character. Using a simple pre-trained neural network designed for character detection, the captured image is validated against a trained data set of expected spells.
 
